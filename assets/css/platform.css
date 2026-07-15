@@ -1,0 +1,177 @@
+:root {
+    --platform-bg: #f6f3ee;
+    --platform-surface: #ffffff;
+    --platform-surface-muted: #f2ede6;
+    --platform-border: rgba(17, 24, 39, 0.08);
+    --platform-text: #1f2937;
+    --platform-text-muted: #6b7280;
+    --platform-primary: #c19a6b;
+    --platform-primary-strong: #a57d4b;
+    --platform-accent: #111827;
+    --platform-success: #0f766e;
+    --platform-warning: #b45309;
+    --platform-danger: #b91c1c;
+    --platform-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    --platform-radius: 18px;
+}
+
+html[data-theme="dark"] {
+    --platform-bg: #09090b;
+    --platform-surface: #111217;
+    --platform-surface-muted: #171923;
+    --platform-border: rgba(255, 255, 255, 0.08);
+    --platform-text: #f3f4f6;
+    --platform-text-muted: #9ca3af;
+    --platform-primary: #d1a875;
+    --platform-primary-strong: #e0bc8d;
+    --platform-accent: #f9fafb;
+    --platform-success: #34d399;
+    --platform-warning: #fbbf24;
+    --platform-danger: #f87171;
+    --platform-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
+}
+
+body {
+    background: var(--platform-bg);
+    color: var(--platform-text);
+}
+
+.marketplace-enhanced .top-bar,
+.marketplace-enhanced .table-container,
+.marketplace-enhanced .card,
+.marketplace-enhanced .stat-card,
+.marketplace-enhanced .form-card,
+.marketplace-enhanced .product-card {
+    box-shadow: var(--platform-shadow);
+}
+
+.theme-toggle {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 3000;
+    width: 52px;
+    height: 52px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--platform-primary), var(--platform-primary-strong));
+    color: #fff;
+    box-shadow: 0 18px 30px rgba(193, 154, 107, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 35px rgba(193, 154, 107, 0.34);
+}
+
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    background: var(--platform-surface);
+    border: 1px solid var(--platform-border);
+    border-radius: 18px;
+    box-shadow: var(--platform-shadow);
+    overflow: hidden;
+    z-index: 2000;
+}
+
+.search-suggestion-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.search-suggestion-item:hover,
+.search-suggestion-item.is-active {
+    background: var(--platform-surface-muted);
+}
+
+.search-suggestion-meta {
+    font-size: 12px;
+    color: var(--platform-text-muted);
+}
+
+.platform-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(193, 154, 107, 0.12);
+    color: var(--platform-primary-strong);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.platform-empty {
+    padding: 48px 20px;
+    border: 1px dashed var(--platform-border);
+    border-radius: var(--platform-radius);
+    text-align: center;
+    color: var(--platform-text-muted);
+    background: var(--platform-surface-muted);
+}
+
+.platform-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.platform-section-title h5,
+.platform-section-title h6 {
+    margin: 0;
+}
+
+.platform-mini-card {
+    background: var(--platform-surface);
+    border: 1px solid var(--platform-border);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.platform-list-item + .platform-list-item {
+    margin-top: 12px;
+}
+
+.platform-inline-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.platform-badge {
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.platform-badge.success {
+    background: rgba(15, 118, 110, 0.12);
+    color: var(--platform-success);
+}
+
+.platform-badge.warning {
+    background: rgba(180, 83, 9, 0.12);
+    color: var(--platform-warning);
+}
+
+.platform-badge.danger {
+    background: rgba(185, 28, 28, 0.12);
+    color: var(--platform-danger);
+}
+
+.platform-badge.info {
+    background: rgba(193, 154, 107, 0.14);
+    color: var(--platform-primary-strong);
+}

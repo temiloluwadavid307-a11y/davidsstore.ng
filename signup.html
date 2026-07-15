@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #F68B1E;
+            --primary-hover: #e07b1a;
+            --dark: #282828;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .signup-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+        }
+
+        .signup-header {
+            background: linear-gradient(135deg, var(--primary), #ff9f43);
+            padding: 32px 24px;
+            color: white;
+            text-align: center;
+        }
+
+        .signup-form {
+            padding: 32px 28px;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+            padding: 14px 24px;
+        }
+
+        .btn-primary-custom:hover {
+            background: var(--primary-hover);
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .role-option {
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 14px 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .role-option i {
+            font-size: 28px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .role-option:hover, .role-option.active {
+            border-color: var(--primary);
+            background: rgba(246, 139, 30, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-card">
+        <div class="signup-header">
+            <i class="fa-solid fa-user-plus display-4 mb-3"></i>
+            <h3>Create Account</h3>
+            <p class="opacity-90 mb-0">Join David's Store today</p>
+        </div>
+        <div class="signup-form">
+            <form id="signupForm">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-2">Account Type</label>
+                    <div class="role-selector">
+                        <div class="role-option active" data-role="customer">
+                            <i class="fa-solid fa-user"></i>
+                            <small class="fw-semibold">Customer</small>
+                        </div>
+                        <div class="role-option" data-role="vendor">
+                            <i class="fa-solid fa-shop"></i>
+                            <small class="fw-semibold">Vendor</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-semibold">Full Name</label>
+                    <input type="text" class="form-control" id="name" required placeholder="John Doe">
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">Email Address</label>
+                    <input type="email" class="form-control" id="email" required placeholder="you@example.com">
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone" class="form-label fw-semibold">Phone Number (Optional)</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="+234 812 345 6789">
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control" id="password" required placeholder="Create a strong password">
+                </div>
+
+                <div id="alertBox" class="alert d-none mb-3" role="alert"></div>
+
+                <button type="submit" id="signupBtn" class="btn btn-primary-custom btn-lg w-100 fw-semibold">
+                    <i class="fa-solid fa-user-plus me-2"></i>
+                    Create Account
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-2 border-top">
+                <p class="text-muted mb-1">Already have an account?</p>
+                <a href="login.php" class="fw-semibold text-decoration-none" style="color: var(--primary)">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/marketplace-core.js"></script>
+    <script>
+        let selectedRole = "customer";
+
+        // Role selector
+        document.querySelectorAll(".role-option").forEach((el) => {
+            el.addEventListener("click", () => {
+                document.querySelectorAll(".role-option").forEach(o => o.classList.remove("active"));
+                el.classList.add("active");
+                selectedRole = el.getAttribute("data-role");
+            });
+        });
+
+        // Signup form submission
+        const signupForm = document.getElementById("signupForm");
+        const alertBox = document.getElementById("alertBox");
+        const signupBtn = document.getElementById("signupBtn");
+
+        signupForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            alertBox.classList.add("d-none");
+            signupBtn.disabled = true;
+            signupBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Creating Account...';
+
+            try {
+                const result = await window.MarketplaceApp.signUp({
+                    name: document.getElementById("name").value,
+                    email: document.getElementById("email").value,
+                    phone: document.getElementById("phone").value,
+                    password: document.getElementById("password").value,
+                    role: selectedRole
+                });
+
+                if (result.success) {
+                    const roleRedirects = {
+                        customer: "index.html",
+                        vendor: "vendor/vendor.html"
+                    };
+                    window.location.href = roleRedirects[selectedRole];
+                } else {
+                    alertBox.className = "alert alert-danger mb-3";
+                    alertBox.textContent = result.error;
+                    alertBox.classList.remove("d-none");
+                }
+            } catch (err) {
+                alertBox.className = "alert alert-danger mb-3";
+                alertBox.textContent = "Something went wrong. Please try again later.";
+                alertBox.classList.remove("d-none");
+            } finally {
+                signupBtn.disabled = false;
+                signupBtn.innerHTML = '<i class="fa-solid fa-user-plus me-2"></i> Create Account';
+            }
+        });
+
+        // Check if user is already logged in
+        const user = window.MarketplaceApp.getCurrentUser();
+        if (user) {
+            const roleRedirects = {
+                customer: "index.html",
+                vendor: "vendor/vendor.html",
+                admin: "admin/admin.html"
+            };
+            window.location.href = roleRedirects[user.role];
+        }
+    </script>
+</body>
+</html>

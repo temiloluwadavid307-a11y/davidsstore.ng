@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/platform.css">
+    <style>
+        :root {
+            --primary: #F68B1E;
+            --primary-hover: #e07b1a;
+            --dark: #282828;
+            --light: #F5F5F5;
+            --white: #FFFFFF;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        body { background-color: var(--light); }
+        .sidebar {
+            background: var(--dark);
+            height: 100vh;
+            color: var(--white);
+            position: fixed;
+            top:0; left:0;
+            width:260px;
+            z-index:1050;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-brand {
+            font-size:1.25rem; font-weight:700;
+            padding:20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items:center; gap:12px;
+        }
+        .sidebar a {
+            color:rgba(255,255,255,0.7);
+            padding:14px 24px; display:flex; align-items:center; gap:14px;
+            text-decoration:none; transition: var(--transition);
+        }
+        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: var(--white); }
+        .sidebar a i { width:20px; text-align:center; }
+        .main-content { margin-left:0; transition: margin-left 0.3s ease; }
+        .top-bar {
+            background: var(--white); padding:12px 20px;
+            box-shadow: var(--shadow-sm);
+            position: sticky; top:0; z-index:1040;
+        }
+        .btn-primary-custom { background: var(--primary); border: none; }
+        .btn-primary-custom:hover { background: var(--primary-hover); }
+        .overlay {
+            position:fixed; top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.5); z-index:1040;
+            opacity:0; visibility:hidden; transition: 0.3s ease;
+        }
+        .overlay.active { opacity:1; visibility:visible; }
+        .product-preview {
+            width:60px; height:60px; object-fit:contain;
+            border:1px solid #e5e5e5; border-radius:8px; padding:6px;
+        }
+        .table-container {
+            background: var(--white); border-radius:12px;
+            box-shadow: var(--shadow-md); overflow:hidden;
+        }
+        @media (min-width: 992px) {
+            .sidebar { transform: translateX(0); }
+            .main-content { margin-left:260px; }
+            .menu-toggle { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-store"></i> ADMIN PANEL
+        </div>
+        <nav class="nav flex-column">
+            <a href="admin.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="admin-products.html" class="active"><i class="fa-solid fa-boxes-stacked"></i> Products</a>
+            <a href="admin-orders.html"><i class="fa-solid fa-basket-shopping"></i> Orders</a>
+            <a href="admin-customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-vendors.html"><i class="fa-solid fa-truck-fast"></i> Vendors</a>
+            <a href="admin-analytics.html"><i class="fa-solid fa-chart-simple"></i> Analytics</a>
+            <a href="admin-settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+            <a href="../index.html"><i class="fa-solid fa-house"></i> Back to Store</a>
+            <a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <div class="top-bar">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-secondary menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+                    <div><h4 class="mb-0">Products Management</h4><p class="text-muted small mb-0">Manage all products in the store</p></div>
+                </div>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-primary-custom btn-sm"><i class="fa-solid fa-plus"></i> Add Product</button>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="bg-white p-4 rounded-12 shadow-md mb-4 rounded-3">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-4"><input type="text" class="form-control" id="adminProductSearch" placeholder="Search products..."></div>
+                    <div class="col-md-3"><select class="form-select" id="adminCategoryFilter"><option>All Categories</option><option>Electronics</option><option>Fashion</option><option>Home & Garden</option><option>Gaming</option><option>Accessories</option></select></div>
+                    <div class="col-md-3"><select class="form-select" id="adminStatusFilter"><option>All Status</option><option>Active</option><option>Inactive</option></select></div>
+                    <div class="col-md-2"><button class="btn btn-outline-primary w-100"><i class="fa-solid fa-filter"></i> Filter</button></div>
+                </div>
+            </div>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Vendor</th><th>Status</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductsTable">
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="../assets/images/14pm.jpg" class="product-preview" alt="iPhone">
+                                        <div><h6 class="mb-0 fw-semibold">iPhone 14 Pro Max - 256GB Gold</h6><small class="text-muted">SKU: DS-IP-14PM-256G</small></div>
+                                    </div>
+                                </td>
+                                <td>Electronics</td>
+                                <td class="fw-semibold">₦ 950,000</td>
+                                <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20">12 in stock</span></td>
+                                <td>TechHub NG</td>
+                                <td><span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-20">Active</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary me-1"><i class="fa-solid fa-eye"></i></button><button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="../assets/images/ps5.jpg" class="product-preview" alt="PS5">
+                                        <div><h6 class="mb-0 fw-semibold">Sony PlayStation 5 Console</h6><small class="text-muted">SKU: DS-PS5-CON</small></div>
+                                    </div>
+                                </td>
+                                <td>Electronics</td>
+                                <td class="fw-semibold">₦ 520,000</td>
+                                <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-20">3 in stock</span></td>
+                                <td>GameWorld</td>
+                                <td><span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-20">Active</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary me-1"><i class="fa-solid fa-eye"></i></button><button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 border-top"><nav aria-label="Page navigation"><ul class="pagination justify-content-center mb-0"><li class="page-item disabled"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li><li class="page-item active"><a class="page-link" href="#">1</a></li><li class="page-item"><a class="page-link" href="#">2</a></li><li class="page-item"><a class="page-link" href="#">3</a></li><li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li></ul></nav></div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/marketplace-core.js"></script>
+    <script>
+        window.MarketplaceApp.requireAuth(['admin']);
+        document.getElementById('logoutBtn').addEventListener('click', (e) => { e.preventDefault(); window.MarketplaceApp.logout(); window.location.href = '../login.php'; });
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        function toggleSidebar() { sidebar.classList.toggle('open'); sidebarOverlay.classList.toggle('active'); }
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => { if (window.innerWidth <992) toggleSidebar(); });
+        });
+
+        function renderAdminProducts() {
+            const search = document.getElementById('adminProductSearch').value.trim().toLowerCase();
+            const category = document.getElementById('adminCategoryFilter').value;
+            const status = document.getElementById('adminStatusFilter').value;
+            const tbody = document.getElementById('adminProductsTable');
+            const state = window.MarketplaceApp.getState();
+
+            const products = state.catalog.products.filter((product) => {
+                const matchesSearch = !search || product.name.toLowerCase().includes(search) || product.sku.toLowerCase().includes(search);
+                const matchesCategory = category === 'All Categories' || product.category === category;
+                const matchesStatus = status === 'All Status' || product.status.toLowerCase() === status.toLowerCase();
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            if (!products.length) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="platform-empty my-3">No products match the current admin filters.</div></td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = products.map((product) => {
+                const vendor = state.users.vendors.find((item) => item.id === product.vendorId);
+                const stockTone = product.stock > 5 ? 'success' : product.stock > 0 ? 'warning' : 'danger';
+                const statusTone = product.status === 'active' ? 'info' : 'secondary';
+                return `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="${window.MarketplaceApp.resolveImage(product.image)}" class="product-preview" alt="${product.name}">
+                                <div><h6 class="mb-0 fw-semibold">${product.name}</h6><small class="text-muted">SKU: ${product.sku}</small></div>
+                            </div>
+                        </td>
+                        <td>${product.category}</td>
+                        <td class="fw-semibold">${window.MarketplaceApp.formatCurrency(product.price)}</td>
+                        <td><span class="badge bg-${stockTone} bg-opacity-10 text-${stockTone} border border-${stockTone} border-opacity-20">${product.stock} in stock</span></td>
+                        <td>${vendor?.name || 'Marketplace Vendor'}</td>
+                        <td><span class="badge bg-${statusTone} bg-opacity-10 text-${statusTone} border border-${statusTone} border-opacity-20">${product.status === 'active' ? 'Active' : 'Inactive'}</span></td>
+                        <td><button class="btn btn-sm btn-outline-primary me-1" type="button"><i class="fa-solid fa-eye"></i></button><button class="btn btn-sm btn-outline-secondary" type="button"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('adminProductSearch').addEventListener('input', renderAdminProducts);
+        document.getElementById('adminCategoryFilter').addEventListener('change', renderAdminProducts);
+        document.getElementById('adminStatusFilter').addEventListener('change', renderAdminProducts);
+        renderAdminProducts();
+        window.addEventListener('marketplace:state-changed', renderAdminProducts);
+    </script>
+</body>
+</html>

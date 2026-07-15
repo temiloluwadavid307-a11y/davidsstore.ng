@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jumia Clone | Online Shopping</title>
+    <link rel="stylesheet" href="jumia.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Top Header -->
+    <header class="main-header">
+        <div class="container navbar">
+            <div class="logo">
+                JUMIA<span><i class="fa-solid fa-star"></i></span>
+            </div>
+
+            <div class="search-container">
+                <i class="fa-solid fa-search search-icon"></i>
+                <input type="text" placeholder="Search products, brands and categories">
+                <button class="search-btn">SEARCH</button>
+            </div>
+
+            <nav class="nav-links">
+                <div class="nav-item">
+                    <i class="fa-regular fa-user"></i>
+                    <span>Account</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="nav-item">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="nav-item cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Cart</span>
+                    <span class="cart-count">0</span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <aside class="sidebar">
+                <ul>
+                    <li><i class="fa-solid fa-apple-whole"></i> Supermarket</li>
+                    <li><i class="fa-solid fa-mobile-screen"></i> Phones & Tablets</li>
+                    <li><i class="fa-solid fa-tv"></i> Electronics</li>
+                    <li><i class="fa-solid fa-shirt"></i> Fashion</li>
+                    <li><i class="fa-solid fa-computer"></i> Computing</li>
+                    <li><i class="fa-solid fa-house"></i> Home & Office</li>
+                </ul>
+            </aside>
+            <div class="main-banner">
+                <img src="https://ng.jumia.is/cms/0-1-initiatives/flash-sales/2024/Desktop_Homepage_Slider__712x384.jpg" alt="Banner">
+            </div>
+            <div class="side-promo">
+                <div class="promo-card">Help Center</div>
+                <div class="promo-card">Easy Return</div>
+                <div class="promo-card">Sell on Jumia</div>
+            </div>
+        </section>
+
+        <!-- Product Grid -->
+        <section class="flash-sales">
+            <div class="section-header">
+                <h2>Flash Sales</h2>
+                <a href="#">SEE ALL ></a>
+            </div>
+            <div class="product-grid">
+                <!-- Product Card 1 -->
+                <div class="product-card">
+                    <div class="badge">-20%</div>
+                    <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/11/4762262/1.jpg" alt="Product">
+                    <div class="info">
+                        <p class="name">Samsung Galaxy A15 - 128GB Memory</p>
+                        <p class="price">₦ 165,000</p>
+                        <p class="old-price">₦ 190,000</p>
+                    </div>
+                    <button class="add-to-cart">ADD TO CART</button>
+                </div>
+                <!-- Repeat cards for more products -->
+            </div>
+        </section>
+    </main>
+        <!-- FLASH SALES SECTION (Horizontal Scroll) -->
+<section class="section-container">
+    <div class="section-header flash-header">
+        <div class="header-title">
+            <i class="fa-solid fa-bolt"></i> Flash Sales
+        </div>
+        <a href="#" class="see-all">SEE ALL ></a>
+    </div>
+    
+    <!-- This is the scrollable row -->
+    <div class="horizontal-scroll">
+        <!-- Product Item -->
+        <div class="product-card">
+            <span class="discount-badge">-15%</span>
+            <img src="https://ng.jumia.is/unsafe/fit-in/300x300/filters:fill(white)/product/11/4762262/1.jpg" alt="phone">
+            <div class="product-info">
+                <p class="product-name">Samsung Galaxy A15</p>
+                <p class="product-price">₦ 165,000</p>
+                <p class="product-old-price">₦ 190,000</p>
+            </div>
+        </div>
+        <!-- Copy/Paste this product-card 8 more times to see the scroll effect -->
+        <div class="product-card">...</div>
+        <div class="product-card">...</div>
+        <div class="product-card">...</div>
+        <div class="product-card">...</div>
+    </div>
+</section>
+
+<!-- OFFICIAL STORES SECTION (Grid View) -->
+<section class="section-container">
+    <div class="section-header grey-header">
+        <div class="header-title">Official Stores</div>
+    </div>
+    <div class="grid-6-columns">
+        <div class="category-item">
+            <img src="https://ng.jumia.is/cms/0-1-category-pages/0-all-brands/adidas.png" alt="brand">
+            <p>Adidas</p>
+        </div>
+        <div class="category-item">...</div>
+        <div class="category-item">...</div>
+    </div>
+</section>
+</body>
+</html>

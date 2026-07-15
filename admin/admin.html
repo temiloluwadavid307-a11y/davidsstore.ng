@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - David's Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/platform.css">
+    <style>
+        :root {
+            --primary: #F68B1E;
+            --primary-hover: #e07b1a;
+            --dark: #282828;
+            --light: #F5F5F5;
+            --white: #FFFFFF;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--dark);
+            height: 100vh;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            z-index: 1050;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar a {
+            color: rgba(255,255,255,0.7);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .sidebar a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--white);
+            padding: 12px 20px;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        /* User Avatar */
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 992px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 260px;
+            }
+            .menu-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Overlay -->
+    <div class="overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-store"></i>
+            ADMIN PANEL
+        </div>
+        <nav class="nav flex-column">
+            <a class="active" href="admin.html">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+            </a>
+            <a href="admin-products.html">
+                <i class="fa-solid fa-boxes-stacked"></i> Products
+            </a>
+            <a href="admin-orders.html">
+                <i class="fa-solid fa-basket-shopping"></i> Orders
+            </a>
+            <a href="admin-customers.html">
+                <i class="fa-solid fa-users"></i> Customers
+            </a>
+            <a href="admin-vendors.html">
+                <i class="fa-solid fa-truck-fast"></i> Vendors
+            </a>
+            <a href="admin-analytics.html">
+                <i class="fa-solid fa-chart-simple"></i> Analytics
+            </a>
+            <a href="admin-settings.html">
+                <i class="fa-solid fa-gear"></i> Settings
+            </a>
+            <a href="../index.html">
+                <i class="fa-solid fa-house"></i> Back to Store
+            </a>
+            <a href="#" id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-outline-secondary menu-toggle" id="menuToggle">
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+                        <div>
+                            <h4 class="mb-0">Admin Dashboard</h4>
+                            <p class="text-muted small mb-0">Welcome back, Admin!</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="input-group d-none d-md-flex" style="max-width: 280px;">
+                            <span class="input-group-text bg-transparent">
+                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0" placeholder="Search...">
+                        </div>
+                        <button class="btn btn-outline-secondary position-relative">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="width:10px;height:10px;"></span>
+                        </button>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="bg-gradient bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width:44px;height:44px;">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                            <div class="text-start d-none d-sm-block">
+                                <div class="fw-bold">Admin</div>
+                                <small class="text-muted">Super Admin</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="p-4">
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="mb-0 text-muted">Total Revenue</h5>
+                            </div>
+                            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fa-solid fa-sack-dollar"></i>
+                            </div>
+                        </div>
+                        <h3 class="mb-1" id="adminTotalRevenue">₦ 12,450,000</h3>
+                        <small class="text-success d-flex align-items-center gap-1">
+                            <i class="fa-solid fa-arrow-up"></i>
+                            +12.5% from last month
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="mb-0 text-muted">Total Orders</h5>
+                            </div>
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="fa-solid fa-basket-shopping"></i>
+                            </div>
+                        </div>
+                        <h3 class="mb-1" id="adminTotalOrders">2,450</h3>
+                        <small class="text-success d-flex align-items-center gap-1">
+                            <i class="fa-solid fa-arrow-up"></i>
+                            +8.2% from last month
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="mb-0 text-muted">Total Products</h5>
+                            </div>
+                            <div class="stat-icon bg-info bg-opacity-10 text-info">
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                            </div>
+                        </div>
+                        <h3 class="mb-1" id="adminTotalProducts">420</h3>
+                        <small class="text-muted d-flex align-items-center gap-1">
+                            <i class="fa-solid fa-box"></i>
+                            42 new this month
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="mb-0 text-muted">Customers</h5>
+                            </div>
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <h3 class="mb-1" id="adminTotalCustomers">15,230</h3>
+                        <small class="text-success d-flex align-items-center gap-1">
+                            <i class="fa-solid fa-arrow-up"></i>
+                            +5.3% from last month
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="table-container">
+                <div class="p-4 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <h5 class="mb-0 fw-semibold">Recent Orders</h5>
+                    <button class="btn btn-primary-custom btn-sm">
+                        View All
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRecentOrdersTable">
+                            <tr>
+                                <td class="fw-semibold">#DS-7845</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar bg-primary bg-opacity-10 text-primary">JD</div>
+                                        John Doe
+                                    </div>
+                                </td>
+                                <td>iPhone 14 Pro Max</td>
+                                <td class="fw-semibold">₦ 950,000</td>
+                                <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20">Delivered</span></td>
+                                <td>2026-06-15</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen-to-square"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">#DS-7844</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar bg-info bg-opacity-10 text-info">SA</div>
+                                        Sarah Adebayo
+                                    </div>
+                                </td>
+                                <td>PS5 Console</td>
+                                <td class="fw-semibold">₦ 520,000</td>
+                                <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-20">Shipped</span></td>
+                                <td>2026-06-14</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen-to-square"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">#DS-7843</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar bg-success bg-opacity-10 text-success">MO</div>
+                                        Michael Okafor
+                                    </div>
+                                </td>
+                                <td>Samsung Galaxy S23 Ultra</td>
+                                <td class="fw-semibold">₦ 850,000</td>
+                                <td><span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-20">Processing</span></td>
+                                <td>2026-06-14</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen-to-square"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">#DS-7842</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar bg-danger bg-opacity-10 text-danger">AI</div>
+                                        Amaka Ikechukwu
+                                    </div>
+                                </td>
+                                <td>MacBook Air M2</td>
+                                <td class="fw-semibold">₦ 720,000</td>
+                                <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-20">Cancelled</span></td>
+                                <td>2026-06-13</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen-to-square"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/marketplace-core.js"></script>
+    <script>
+        // Session Check
+        window.MarketplaceApp.requireAuth(['admin']);
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.MarketplaceApp.logout();
+            window.location.href = '../login.php';
+        });
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar on link click for mobile
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        function renderAdminDashboard() {
+            const metrics = window.MarketplaceApp.getAdminMetrics();
+            document.getElementById('adminTotalRevenue').textContent = window.MarketplaceApp.formatCurrency(metrics.totalRevenue);
+            document.getElementById('adminTotalOrders').textContent = metrics.totalOrders.toLocaleString();
+            document.getElementById('adminTotalProducts').textContent = metrics.totalProducts.toLocaleString();
+            document.getElementById('adminTotalCustomers').textContent = metrics.totalCustomers.toLocaleString();
+
+            document.getElementById('adminRecentOrdersTable').innerHTML = metrics.recentOrders.map((order) => {
+                const product = window.MarketplaceApp.getProductById(order.items[0]?.productId);
+                const tone = window.MarketplaceApp.getStatusTone(order.status);
+                return `
+                    <tr>
+                        <td class="fw-semibold">#${order.id}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="user-avatar bg-primary bg-opacity-10 text-primary">JD</div>
+                                Jane Doe
+                            </div>
+                        </td>
+                        <td>${product?.name || 'Marketplace Product'}</td>
+                        <td class="fw-semibold">${window.MarketplaceApp.formatCurrency(order.total)}</td>
+                        <td><span class="badge bg-${tone} bg-opacity-10 text-${tone} border border-${tone} border-opacity-20">${order.status}</span></td>
+                        <td>${new Date(order.createdAt).toISOString().slice(0, 10)}</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary me-1" href="admin-orders.html"><i class="fa-solid fa-eye"></i></a>
+                            <button class="btn btn-sm btn-outline-secondary" type="button"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        renderAdminDashboard();
+        window.addEventListener('marketplace:state-changed', renderAdminDashboard);
+    </script>
+</body>
+</html>
