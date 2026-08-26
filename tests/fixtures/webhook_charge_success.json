@@ -1,0 +1,21 @@
+{
+  "event": "charge.success",
+  "data": {
+    "id": 1234567890,
+    "domain": "test",
+    "status": "success",
+    "reference": "TEST-REF-12345",
+    "amount": 5000000,
+    "currency": "NGN",
+    "gateway_response": "Successful",
+    "paid_at": "2026-08-24T12:00:00.000Z",
+    "channel": "card",
+    "ip_address": "127.0.0.1",
+    "metadata": {
+      "order_id": 1,
+      "user_id": 2,
+      "marketplace_commission": 10
+    },
+    "log": []
+  }
+}

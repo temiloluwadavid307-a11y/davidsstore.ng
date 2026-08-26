@@ -8,10 +8,26 @@ $page_name = 'Dashboard';
 $user_role = 'vendor';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'dashboard';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 $vendor = ensure_current_vendor();
 if (!$vendor) {
     redirect(APP_URL . '/index.php');
+}
+
+$vendor_kyc_status = strtolower((string) ($vendor['kyc_status'] ?? 'not_started'));
+$kyc_alert = null;
+if (in_array($vendor_kyc_status, ['not_started', 'rejected', 'requires_update'], true)) {
+    $kyc_alert = [
+        'type' => 'warning',
+        'title' => 'Complete your KYC to unlock payouts',
+        'message' => 'Your store is active, but payouts and Paystack payouts remain locked until your verification is approved.'
+    ];
+} elseif (in_array($vendor_kyc_status, ['submitted', 'under_review'], true)) {
+    $kyc_alert = [
+        'type' => 'info',
+        'title' => 'KYC submitted for review',
+        'message' => 'Your documents are under review. We’ll notify you once the verification is approved.'
+    ];
 }
 
 $stmt = $conn->prepare('SELECT COUNT(*) AS product_count FROM products WHERE vendor_id = ?');
@@ -33,6 +49,17 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 require_once __DIR__ . '/../includes/dashboard-topbar.php';
 ?>
+<?php if ($kyc_alert): ?>
+    <div style="margin: 0 0 20px; padding: 16px 18px; border-radius: 14px; border: 1px solid <?= $kyc_alert['type'] === 'warning' ? '#f59e0b' : '#3b82f6' ?>; background: <?= $kyc_alert['type'] === 'warning' ? '#fff7ed' : '#eff6ff' ?>; color: <?= $kyc_alert['type'] === 'warning' ? '#9a5b00' : '#1d4ed8' ?>; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div>
+            <div style="font-weight: 700; margin-bottom: 4px;"><?= e($kyc_alert['title']) ?></div>
+            <div style="font-size: 14px; opacity: 0.9;"><?= e($kyc_alert['message']) ?></div>
+        </div>
+        <a href="kyc.php" class="dashboard-btn dashboard-btn-primary" style="white-space: nowrap;">
+            <i class="fas fa-id-card"></i> <?= $kyc_alert['type'] === 'warning' ? 'Complete KYC' : 'View KYC status' ?>
+        </a>
+    </div>
+<?php endif; ?>
 <div class="dashboard-hero">
     <h2>Run your e-commerce business from a polished control center.</h2>
     <p>Create listings, track orders, review earnings, and manage your profile from one place.</p>

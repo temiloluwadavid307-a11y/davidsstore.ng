@@ -1,0 +1,2 @@
+# Prevent direct access to uploaded KYC documents
+Require all denied

@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (empty($password)) {
         $errors[] = 'Password is required.';
     } else {
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1 AND role = 'admin'");
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND is_active = 1 AND role IN ('admin','super_admin')");
         $stmt->bind_param('s', $email);
         $stmt->execute();
         $user = $stmt->get_result()->fetch_assoc();

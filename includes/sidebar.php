@@ -13,6 +13,7 @@ if ($user_role === 'admin') {
         ['id' => 'categories', 'name' => 'Categories', 'url' => 'categories.php', 'icon' => 'fas fa-list'],
         ['id' => 'orders', 'name' => 'Orders', 'url' => 'orders.php', 'icon' => 'fas fa-shopping-cart'],
         ['id' => 'users', 'name' => 'Users', 'url' => 'users.php', 'icon' => 'fas fa-users'],
+        ['id' => 'vendor-applications', 'name' => 'Vendor Applications', 'url' => 'vendor-applications.php', 'icon' => 'fas fa-clipboard-list'],
         ['id' => 'statistics', 'name' => 'Statistics', 'url' => 'statistics.php', 'icon' => 'fas fa-chart-line'],
         ['id' => 'messages', 'name' => 'Messages', 'url' => 'messages.php', 'icon' => 'fas fa-envelope'],
     ];
@@ -24,6 +25,7 @@ if ($user_role === 'admin') {
         ['id' => 'orders', 'name' => 'Orders', 'url' => 'vendor-orders.php', 'icon' => 'fas fa-shopping-cart'],
         ['id' => 'earnings', 'name' => 'Earnings', 'url' => 'vendor-earnings.php', 'icon' => 'fas fa-wallet'],
         ['id' => 'analytics', 'name' => 'Analytics', 'url' => 'vendor-analytics.php', 'icon' => 'fas fa-chart-pie'],
+        ['id' => 'kyc', 'name' => 'KYC Verification', 'url' => 'kyc.php', 'icon' => 'fas fa-id-card'],
         ['id' => 'account', 'name' => 'Account Settings', 'url' => 'vendor-account-settings.php', 'icon' => 'fas fa-cog'],
     ];
 }

@@ -9,7 +9,7 @@ $page_name = 'Orders';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'orders';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($order_id <= 0) {

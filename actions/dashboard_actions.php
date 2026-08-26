@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(APP_URL . '/index.php');
 }
 
-if (!csrf_validate($_POST['csrf_token'] ?? '')) {
+if (!validate_csrf($_POST['csrf_token'] ?? '')) {
     set_flash('error', 'Invalid request. Please try again.');
     redirect(APP_URL . '/index.php');
 }
@@ -65,6 +65,8 @@ switch ($action) {
         $stmt = $conn->prepare('UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?');
         $stmt->bind_param('si', $status, $order_id);
         $stmt->execute();
+        // Notify customer about status change
+        send_order_status_email($order_id, $status);
         set_flash('success', 'Order status updated.');
         break;
 

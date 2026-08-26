@@ -3,14 +3,9 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-if (!is_logged_in()) {
-    redirect(APP_URL . '/login.php');
-}
+require_customer();
 
 $user = current_user();
-if (($user['role'] ?? 'customer') !== 'customer') {
-    redirect(APP_URL . '/index.php');
-}
 
 $page_key = $_GET['page'] ?? 'orders';
 $pages = [
@@ -42,8 +37,8 @@ $pages = [
 
 $active = $pages[$page_key] ?? $pages['orders'];
 $page_title = $active['title'] . ' - Customer Dashboard - ' . APP_NAME;
-$customer_name = $user['name'] ?: 'Customer';
-$customer_email = $user['email'] ?: 'customer@example.com';
+$customer_name = $user['name'] ?? 'Customer';
+$customer_email = $user['email'] ?? 'customer@example.com';
 
 $content_html = $active['body'];
 if ($page_key === 'orders') {

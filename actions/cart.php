@@ -9,7 +9,7 @@ $redirect = $_POST['redirect'] ?? $_GET['redirect'] ?? APP_URL . '/cart.php';
 // Validate CSRF token for POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrf_token = $_POST['csrf_token'] ?? '';
-    if (!csrf_validate($csrf_token)) {
+    if (!validate_csrf($csrf_token)) {
         set_flash('error', 'Invalid request. Please try again.');
         redirect($redirect);
     }

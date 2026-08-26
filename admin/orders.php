@@ -9,7 +9,7 @@ $page_name = 'Orders';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'orders';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 $query = "SELECT o.id, o.order_number, o.total, o.status, o.created_at, o.customer_name, o.customer_email, o.shipping_city, o.shipping_state, o.payment_method
           FROM orders o

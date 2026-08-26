@@ -2,22 +2,17 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-if (!is_logged_in()) {
-    redirect(APP_URL . '/login.php');
-}
+require_customer();
 
 $user = current_user();
-if (($user['role'] ?? 'customer') !== 'customer') {
-    redirect(APP_URL . '/index.php');
-}
 
 $page_title = 'Customer Dashboard - ' . APP_NAME;
 $page_name = 'Dashboard';
 $user_role = 'customer';
 $active_page = 'dashboard';
-$logout_url = '../actions/logout.php';
-$customer_name = $user['name'] ?: 'Customer';
-$customer_email = $user['email'] ?: 'customer@example.com';
+$logout_url = APP_URL . '/actions/logout.php';
+$customer_name = $user['name'] ?? 'Customer';
+$customer_email = $user['email'] ?? 'customer@example.com';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
 require_once __DIR__ . '/../includes/sidebar.php';

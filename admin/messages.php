@@ -9,7 +9,7 @@ $page_name = 'Messages';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'messages';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 $messages = $conn->query('SELECT id, name, email, subject, message, created_at FROM contact_messages ORDER BY created_at DESC')->fetch_all(MYSQLI_ASSOC);
 

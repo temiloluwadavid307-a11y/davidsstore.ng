@@ -9,12 +9,17 @@ $page_name = 'Dashboard';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'dashboard';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 require_once __DIR__ . '/../includes/dashboard-topbar.php';
 ?>
+<?php if (!empty($pending_vendor_count)): ?>
+    <div class="dashboard-alert" style="margin:0 0 24px; padding:18px; border-radius:18px; background:#fef9c3; color:#92400e; border:1px solid #facc15;">
+        <strong><?= e($pending_vendor_count) ?></strong> pending vendor application<?= $pending_vendor_count === 1 ? '' : 's' ?> await review. <a href="<?= APP_URL ?>/admin/vendor-applications.php" style="text-decoration:underline; color:#92400e;">Review now</a>.
+    </div>
+<?php endif; ?>
 <div class="dashboard-grid">
     <div class="dashboard-card">
         <p>Welcome back, admin. Use the navigation to manage products, orders, users and messages.</p>

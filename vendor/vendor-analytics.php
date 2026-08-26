@@ -9,7 +9,7 @@ $page_name = 'Analytics';
 $user_role = 'vendor';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'analytics';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
 require_once __DIR__ . '/../includes/sidebar.php';

@@ -9,7 +9,7 @@ $page_name = 'My Products';
 $user_role = 'vendor';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'my-products';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 $vendor = ensure_current_vendor();
 if (!$vendor) {
     redirect(APP_URL . '/index.php');

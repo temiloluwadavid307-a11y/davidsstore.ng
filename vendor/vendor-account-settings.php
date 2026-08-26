@@ -9,7 +9,7 @@ $page_name = 'Account Settings';
 $user_role = 'vendor';
 $user = current_user();
 $active_page = 'account';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 $vendor = ensure_current_vendor();
 if (!$vendor) {
     redirect(APP_URL . '/index.php');

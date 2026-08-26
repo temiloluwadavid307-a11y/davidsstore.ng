@@ -9,7 +9,7 @@ $page_name = 'Add Product';
 $user_role = 'vendor';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'add-product';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 $vendor = ensure_current_vendor();
 if (!$vendor) {
     redirect(APP_URL . '/index.php');
@@ -31,7 +31,7 @@ $cats = $conn->query('SELECT id, name FROM categories WHERE is_active = 1 ORDER 
 $brands = $conn->query('SELECT id, name FROM brands WHERE is_active = 1 ORDER BY name')->fetch_all(MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_validate($_POST['csrf_token'] ?? '')) {
+    if (!validate_csrf($_POST['csrf_token'] ?? '')) {
         set_flash('error', 'Invalid request. Please try again.');
         redirect(APP_URL . '/vendor/vendor-add-product.php' . ($id ? '?id=' . $id : ''));
     }

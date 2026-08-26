@@ -9,7 +9,7 @@ $page_name = 'Users';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'users';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 $users = $conn->query('SELECT id, first_name, last_name, email, role, created_at FROM users ORDER BY created_at DESC')->fetch_all(MYSQLI_ASSOC);
 

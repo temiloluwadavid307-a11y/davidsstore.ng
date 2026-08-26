@@ -9,7 +9,7 @@ $page_name = 'Statistics';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'statistics';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 $counts = [];
 $counts['products'] = $conn->query('SELECT COUNT(*) AS total FROM products')->fetch_assoc()['total'] ?? 0;

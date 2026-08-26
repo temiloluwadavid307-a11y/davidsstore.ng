@@ -5,7 +5,7 @@
 $user_role = $user_role ?? 'admin';
 $page_name = $page_name ?? 'Dashboard';
 $user = $user ?? null;
-$logout_url = $logout_url ?? '../actions/logout.php';
+$logout_url = $logout_url ?? APP_URL . '/actions/logout.php';
 
 // Get user initials
 $user_initials = 'U';
@@ -22,7 +22,13 @@ if ($user) {
         $user_initials = $first . $last;
     }
 }
-$role_display = $user_role === 'admin' ? 'Administrator' : 'Vendor';
+$role_display = match ($user_role) {
+    'super_admin' => 'Super Admin',
+    'admin' => 'Administrator',
+    'vendor' => 'Vendor',
+    'customer' => 'Customer',
+    default => 'User',
+};
 ?>
         <div class="dashboard-main">
             <header class="dashboard-topbar">

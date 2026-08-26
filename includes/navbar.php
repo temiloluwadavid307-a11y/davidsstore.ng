@@ -42,6 +42,10 @@ $search_query = $_GET['q'] ?? '';
                     <i class="far fa-user" aria-hidden="true"></i>
                     <span><?= e($user['name']) ?></span>
                 </a>
+                <a href="<?= APP_URL ?>/vendor/become-vendor.php" class="nav-item" data-tooltip="Apply to become a vendor">
+                    <i class="fas fa-store" aria-hidden="true"></i>
+                    <span>Become a Vendor</span>
+                </a>
                 <?php endif; ?>
                 <a href="<?= APP_URL ?>/actions/logout.php" class="nav-item" data-tooltip="Sign out of your account">
                     <i class="fas fa-sign-out-alt" aria-hidden="true"></i>

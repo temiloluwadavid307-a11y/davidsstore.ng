@@ -140,9 +140,13 @@ require_once __DIR__ . '/includes/navbar.php';
     </section>
 
     <!-- Newsletter -->
-    <section class="newsletter-banner">
-        <h2>Stay Ahead of the Drop</h2>
-        <p>Get exclusive access to new collections, early sales, and style inspiration.</p>
+    <section class="newsletter-banner" style="display:flex; flex-direction:column; gap:16px; align-items:flex-start;">
+        <h2>Become a Vendor</h2>
+        <p>Are you a brand, reseller, or creator? Apply to become a verified vendor on David's Store and start reaching new customers.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+            <a href="<?= APP_URL ?>/vendor/become-vendor.php" class="cta-btn">Apply Now</a>
+            <a href="<?= APP_URL ?>/signup.php" class="cta-btn" style="background:transparent;border:1px solid #fff;">Create Account</a>
+        </div>
         <form class="newsletter-inline" action="<?= APP_URL ?>/actions/newsletter.php" method="post">
             <input type="email" name="email" placeholder="Enter your email address" required>
             <button type="submit">NOTIFY ME</button>

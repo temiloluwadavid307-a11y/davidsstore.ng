@@ -9,7 +9,7 @@ $page_name = 'Products';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'products';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 $errors = [];
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $product_id = $id;
             } else {
                 $insert = $conn->prepare('INSERT INTO products (vendor_id, category_id, brand_id, name, slug, sku, description, features, specifications, price, old_price, stock_quantity, is_featured, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                $insert->bind_param('iiissssddiii', $vendor_id, $category_id, $brand_id, $name, $slug, $sku, $description, $features, $specs, $price, $old_price, $stock, $is_featured, $is_active);
+                $insert->bind_param('iiissssssddiii', $vendor_id, $category_id, $brand_id, $name, $slug, $sku, $description, $features, $specs, $price, $old_price, $stock, $is_featured, $is_active);
                 $insert->execute();
                 $product_id = $conn->insert_id;
             }

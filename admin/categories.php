@@ -9,7 +9,7 @@ $page_name = 'Categories';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'categories';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 $errors = [];
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;

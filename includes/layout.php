@@ -15,7 +15,7 @@ function render_dashboard_page(array $options, callable $content_renderer): void
     $page_name = $options['page_name'] ?? 'Dashboard';
     $user_role = $options['user_role'] ?? 'admin';
     $active_page = $options['active_page'] ?? 'dashboard';
-    $logout_url = $options['logout_url'] ?? '../actions/logout.php';
+    $logout_url = $options['logout_url'] ?? APP_URL . '/actions/logout.php';
     $user = $options['user'] ?? current_user();
 
     require_once __DIR__ . '/dashboard-header.php';

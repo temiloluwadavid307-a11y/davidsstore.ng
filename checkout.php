@@ -2,6 +2,7 @@
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/paystack.php';
 
 init_cart();
 $cart_items = $_SESSION['cart'] ?? [];
@@ -26,6 +27,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['paystack'] ?? '') === 'succe
     $reference = sanitize($_GET['reference'] ?? '');
 
     if ($pending_checkout) {
+        // Verify Paystack payment server-side when secret is configured
+        $payment_verified = false;
+        $reference = $reference ?: ($_GET['reference'] ?? '');
+        if (!empty($reference) && defined('PAYSTACK_SECRET_KEY') && PAYSTACK_SECRET_KEY) {
+            $verifyUrl = 'https://api.paystack.co/transaction/verify/' . urlencode($reference);
+            $ch = curl_init($verifyUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer ' . PAYSTACK_SECRET_KEY,
+                'Cache-Control: no-cache',
+            ]);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+            $resp = curl_exec($ch);
+            $err = curl_error($ch);
+            curl_close($ch);
+            if ($resp && !$err) {
+                $data = json_decode($resp, true);
+                if (!empty($data['status']) && $data['status'] === true && !empty($data['data']['status']) && $data['data']['status'] === 'success') {
+                    $payment_verified = true;
+                }
+            }
+        }
         $order_number = 'DS-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
         $user_id = $user ? $user['id'] : null;
         $stmt = $conn->prepare('
@@ -61,9 +84,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['paystack'] ?? '') === 'succe
                 $stock_stmt->execute();
             }
 
+            // Clear session and cart
             unset($_SESSION['pending_checkout']);
             unset($_SESSION['paystack_reference']);
             clear_cart();
+
+            // Send order confirmation (always send order receipt)
+            send_order_confirmation_email($order_id);
+
+            // If payment was verified, mark order paid and send payment confirmation
+            if ($payment_verified) {
+                $u = $conn->prepare('UPDATE orders SET payment_status = "paid", status = "processing", updated_at = NOW() WHERE id = ?');
+                $u->bind_param('i', $order_id);
+                $u->execute();
+                send_payment_confirmation_email($order_id);
+            }
+
             set_flash('success', "Payment successful! Order #$order_number has been placed.");
             redirect(APP_URL . '/index.php');
         }
@@ -95,21 +131,117 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         if ($payment_method === 'paystack') {
-            $_SESSION['pending_checkout'] = [
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'address' => $address,
-                'city' => $city,
-                'state' => $state,
-                'notes' => $notes,
-                'subtotal' => $subtotal,
-                'shipping' => $shipping,
-                'total' => $total,
-                'items' => $cart_items,
-            ];
-            $_SESSION['paystack_reference'] = $paystack_reference;
-            $initiate_paystack = true;
+            // Create pending order, order_items, and order_vendor_payouts, then initialize Paystack transaction with dynamic split.
+            $conn->begin_transaction();
+            try {
+                $order_number = 'DS-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+                $user_id = $user ? $user['id'] : null;
+                $stmt = $conn->prepare("INSERT INTO orders (order_number, user_id, customer_name, customer_email, customer_phone,
+                        shipping_address, shipping_city, shipping_state, notes, subtotal, shipping_fee, total, status, payment_method)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'paystack')");
+                $stmt->bind_param('sisssssssddd', $order_number, $user_id, $name, $email, $phone, $address, $city, $state, $notes, $subtotal, $shipping, $total);
+                if (!$stmt->execute()) throw new Exception('Unable to create order');
+                $order_id = $conn->insert_id;
+
+                $item_stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, line_total) VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+                // Build per-vendor totals
+                $vendorTotals = [];
+                foreach ($cart_items as $item) {
+                    $line_total = $item['price'] * $item['quantity'];
+                    $item_stmt->bind_param('iissidd', $order_id, $item['id'], $item['name'], $item['sku'], $item['quantity'], $item['price'], $line_total);
+                    $item_stmt->execute();
+
+                    // decrement stock
+                    $stock_stmt = $conn->prepare('UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ? AND stock_quantity >= ?');
+                    $stock_stmt->bind_param('iii', $item['quantity'], $item['id'], $item['quantity']);
+                    $stock_stmt->execute();
+
+                    // fetch vendor id
+                    $prodStmt = $conn->prepare('SELECT vendor_id FROM products WHERE id = ? LIMIT 1');
+                    $prodStmt->bind_param('i', $item['id']);
+                    $prodStmt->execute();
+                    $prod = $prodStmt->get_result()->fetch_assoc();
+                    $vendor_id = $prod['vendor_id'] ?? 0;
+                    if (!isset($vendorTotals[$vendor_id])) $vendorTotals[$vendor_id] = 0.00;
+                    $vendorTotals[$vendor_id] += $line_total;
+                }
+
+                // Commission percent from settings
+                $commission_percent = (float) get_setting('marketplace_commission_percent', 10);
+
+                // Create order_vendor_payouts rows
+                $payoutStmt = $conn->prepare("INSERT INTO order_vendor_payouts (order_id, vendor_id, gross_amount, vendor_amount, marketplace_commission, subaccount_code, status) VALUES (?,?,?,?,?,?,'pending')");
+                $vendorSubaccounts = [];
+                foreach ($vendorTotals as $vid => $gross) {
+                    $market_comm = round(($gross * $commission_percent) / 100, 2);
+                    $vendor_amt = round($gross - $market_comm, 2);
+                    // lookup vendor subaccount
+                    $vstmt = $conn->prepare('SELECT paystack_subaccount_code, kyc_status FROM vendors WHERE id = ? LIMIT 1');
+                    $vstmt->bind_param('i', $vid);
+                    $vstmt->execute();
+                    $vrow = $vstmt->get_result()->fetch_assoc();
+                    $subcode = $vrow['paystack_subaccount_code'] ?? null;
+                    $kyc_status = $vrow['kyc_status'] ?? 'not_started';
+
+                    $payoutStmt->bind_param('iiddds', $order_id, $vid, $gross, $vendor_amt, $market_comm, $subcode);
+                    $payoutStmt->execute();
+
+                    // collect for split creation; require verified kyc and existing subaccount
+                    if (empty($subcode) || $kyc_status !== 'verified') {
+                        // cannot proceed with automatic split-payments when vendor not ready
+                        throw new Exception('One or more vendors are not eligible for automatic payouts. Please contact support.');
+                    }
+                    $vendorSubaccounts[] = ['vendor_id' => $vid, 'subaccount' => $subcode, 'gross' => $gross, 'vendor_amount' => $vendor_amt];
+                }
+
+                // Create Paystack split (percentage-based)
+                $splitSubaccounts = [];
+                foreach ($vendorSubaccounts as $vs) {
+                    $sharePercent = ($vs['vendor_amount'] / $total) * 100.0;
+                    $splitSubaccounts[] = ['subaccount' => $vs['subaccount'], 'share' => round($sharePercent, 2)];
+                }
+
+                $splitParams = ['name' => 'Order ' . $order_number, 'type' => 'percentage', 'subaccounts' => $splitSubaccounts];
+                $splitResp = paystack_create_split($splitParams);
+                if (!empty($splitResp['error'])) throw new Exception('Paystack split creation error: ' . $splitResp['error']);
+                $splitBody = $splitResp['body'] ?? null;
+                if (empty($splitBody['status']) || $splitBody['status'] !== true || empty($splitBody['data']['split_code'])) {
+                    throw new Exception('Unexpected Paystack split response: ' . json_encode($splitBody));
+                }
+                $split_code = $splitBody['data']['split_code'];
+
+                // Initialize transaction
+                $initParams = [
+                    'email' => $email,
+                    'amount' => (int) round($total * 100),
+                    'reference' => $paystack_reference,
+                    'split_code' => $split_code,
+                    'metadata' => ['order_id' => $order_id, 'user_id' => $user_id, 'marketplace_commission' => $commission_percent]
+                ];
+                $initResp = paystack_initialize_transaction($initParams);
+                if (!empty($initResp['error'])) throw new Exception('Paystack initialize error: ' . $initResp['error']);
+                $initBody = $initResp['body'] ?? null;
+                if (empty($initBody['status']) || $initBody['status'] !== true || empty($initBody['data']['authorization_url'])) {
+                    throw new Exception('Unexpected Paystack initialize response: ' . json_encode($initBody));
+                }
+
+                // create payments record (pending)
+                $payIns = $conn->prepare('INSERT INTO payments (order_id, user_id, gateway, paystack_reference, gross_amount, marketplace_commission, status, created_at) VALUES (?,?,?,?,?,?,"pending",NOW())');
+                $gross_amount = $total;
+                $mc = ($gross_amount * $commission_percent) / 100.0;
+                $payIns->bind_param('iissdd', $order_id, $user_id, $gateway='paystack', $paystack_reference, $gross_amount, $mc);
+                $payIns->execute();
+
+                $conn->commit();
+
+                // Redirect customer to Paystack authorization
+                header('Location: ' . $initBody['data']['authorization_url']);
+                exit;
+            } catch (Exception $e) {
+                $conn->rollback();
+                $errors[] = 'Payment initialization failed: ' . $e->getMessage();
+            }
         } else {
             $order_number = 'DS-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
             $user_id = $user ? $user['id'] : null;
@@ -148,6 +280,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 clear_cart();
+
+                // Send order confirmation email
+                send_order_confirmation_email($order_id);
+
                 set_flash('success', "Order #$order_number placed successfully! We'll contact you shortly.");
                 redirect(APP_URL . '/index.php');
             } else {

@@ -9,7 +9,7 @@ $page_name = 'Products';
 $user_role = 'admin';
 $user = $_SESSION['user'] ?? null;
 $active_page = 'products';
-$logout_url = '../actions/logout.php';
+$logout_url = APP_URL . '/actions/logout.php';
 
 // Fetch products
 $stmt = $conn->prepare("SELECT p.id, p.name, p.sku, p.price, p.old_price, p.stock_quantity, p.is_active, p.image_primary, c.name AS category_name, b.name AS brand_name

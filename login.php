@@ -58,6 +58,7 @@ require_once __DIR__ . '/includes/navbar.php';
         <div class="form-card">
             <h1>Welcome Back</h1>
             <p class="subtitle">Sign in to your David's Store account</p>
+            <p style="margin:-6px 0 18px; color:#6b7280; font-size:14px;">Need to manage your own store? Sign in and start a vendor application from the dashboard.</p>
 
             <?php if ($errors): ?>
             <div style="background:#fef2f2;color:#991b1b;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px;">
@@ -74,6 +75,7 @@ require_once __DIR__ . '/includes/navbar.php';
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                 </div>
+                <div style="text-align:right; margin-bottom:16px;"><a href="<?= APP_URL ?>/forgot-password.php" style="color:#2563eb; text-decoration:none; font-size:14px;">Forgot password?</a></div>
                 <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
             </form>
 
