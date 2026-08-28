@@ -12,7 +12,7 @@ if (empty($cart_items)) {
     redirect(APP_URL . '/cart.php');
 }
 
-$page_title = 'Checkout — ' . APP_NAME;
+$page_title = 'Checkout — ' . STORE_NAME;
 $subtotal = cart_total();
 $shipping = $subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : 1500;
 $total = $subtotal + $shipping;
@@ -443,10 +443,7 @@ require_once __DIR__ . '/includes/navbar.php';
             <h1>Complete your order</h1>
             <p class="hero-copy">Fast delivery, trusted payments, and a smooth experience from cart to doorstep.</p>
         </div>
-        <div class="checkout-hero-badge">
-            <i class="fas fa-shipping-fast"></i>
-            <span>Free delivery over ₦10,000</span>
-        </div>
+        <?php /* Promotional free-delivery badge removed per rebrand */ ?>
     </div>
 
     <div class="checkout-steps" aria-label="Checkout progress">

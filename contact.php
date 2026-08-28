@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$page_title = 'Contact Us — ' . APP_NAME;
+$page_title = 'Contact Us — ' . STORE_NAME;
 $errors = [];
 $success = false;
 
@@ -62,7 +62,7 @@ require_once __DIR__ . '/includes/navbar.php';
                 <i class="fas fa-envelope"></i>
                 <div>
                     <h4>Email</h4>
-                    <p>support@davidsstore.ng<br>orders@davidsstore.ng</p>
+                        <p>support@swagbag.ng<br>orders@swagbag.ng</p>
                 </div>
             </div>
             <div class="contact-info-item">

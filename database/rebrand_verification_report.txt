@@ -1,0 +1,51 @@
+Rebrand Verification Report
+Date: 2026-08-28
+
+Files produced:
+- database/codesbyd4_backup.sql (backup copy of original dump)
+- database/codesbyd4_rebranded.sql (rebranded dump: DS- -> SB-, vendor name updated)
+
+Summary of automated transformations performed on the provided dump (`database/codesbyd4.sql`):
+- Replaced SKU prefix: all occurrences of "DS-" -> "SB-".
+  - ORIGINAL count of "DS-" occurrences found: 35
+  - NEW count of "SB-" occurrences after replacement: 35
+  - Note: counts match because each DS- was converted to SB-.
+
+- Updated vendor store name:
+  - ORIGINAL occurrences of literal "David Store Main": 1
+  - NEW occurrences of literal "David Store Main" after update: 0
+  - Vendor entry changed to: ('Swagbag Store Main', 'store@davidsstore.ng', 1);
+
+Sample before/after snippets (exact lines from the dump):
+BEFORE:
+INSERT INTO vendors (name, email, is_active) VALUES
+('David Store Main', 'store@davidsstore.ng', 1);
+
+AFTER:
+INSERT INTO vendors (name, email, is_active) VALUES
+('Swagbag Store Main', 'store@davidsstore.ng', 1);
+
+BEFORE (example SKU line):
+(1, 1, 1, 'Premium Fleece Hoodie — Midnight Black', 'premium-fleece-hoodie-midnight-black', 'DS-HD-001',
+
+AFTER (example SKU line):
+(1, 1, 1, 'Premium Fleece Hoodie — Midnight Black', 'premium-fleece-hoodie-midnight-black', 'SB-HD-001',
+
+Notes and recommendations:
+- The rebrand script performed a textual replacement on the dump. This is safe for seed/demo data but should be reviewed before applying to a production database.
+- I did NOT modify user emails (e.g., admin@davidsstore.ng) or brand names (e.g., "David Originals") beyond the specific vendor name change. If you want those updated in the dump as well, tell me which categories to change and I'll apply them (I can also make email replacements, but this may affect login credentials).
+- To import the rebranded dump into a development database:
+
+  # Backup any existing dev DB first
+  mysqldump -u DB_USER -p DB_NAME > db-backup-$(date +%F).sql
+
+  # Import rebranded dump
+  mysql -u DB_USER -p DB_NAME < database/codesbyd4_rebranded.sql
+
+- Rollback: If you prefer restoring original dump, import `database/codesbyd4_backup.sql` instead.
+
+If you want, I can also:
+- Replace other occurrences (brand names, admin emails) within the dump.
+- Apply the migration SQL directly to a live development database (requires DB credentials or a database dump to import here).
+
+End of report.

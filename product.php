@@ -11,7 +11,7 @@ if (!$product) {
     redirect(APP_URL . '/products.php');
 }
 
-$page_title = e($product['name']) . ' — ' . APP_NAME;
+$page_title = e($product['name']) . ' — ' . STORE_NAME;
 $discount = (int) ($product['discount_percent'] ?? 0);
 $features = array_filter(explode('|', $product['features'] ?? ''));
 $specs = array_filter(explode('|', $product['specifications'] ?? ''));

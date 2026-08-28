@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$page_title = 'About Us — ' . APP_NAME;
+$page_title = 'About Us — ' . STORE_NAME;
 
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/includes/navbar.php';
@@ -11,19 +11,19 @@ require_once __DIR__ . '/includes/navbar.php';
 
 <main class="container content-page">
     <div class="content-hero">
-        <h1>About David's Store</h1>
+        <h1>About <?= STORE_NAME ?></h1>
         <p>Nigeria's destination for premium fashion, streetwear, and lifestyle essentials — curated for those who demand quality.</p>
     </div>
 
     <div class="content-section" id="story">
         <h2>Our Story</h2>
-        <p>David's Store was born from a simple belief: Nigerians deserve access to world-class fashion without compromising on quality or authenticity. What started as a passion project in Lagos has grown into a premium online destination serving style-conscious customers across the country.</p>
+        <p><?= STORE_NAME ?> was born from a simple belief: Nigerians deserve access to world-class fashion without compromising on quality or authenticity. What started as a passion project in Lagos has grown into a premium online destination serving style-conscious customers across the country.</p>
         <p>We partner with the finest local and international brands to bring you carefully curated collections — from heavyweight hoodies and oversized tees to limited-edition sneakers and handcrafted accessories. Every piece in our catalog is selected for its craftsmanship, durability, and style.</p>
     </div>
 
     <div class="content-section" id="quality">
         <h2>Quality Promise</h2>
-        <p>We don't do fast fashion. Every product on David's Store meets our strict quality standards — premium materials, expert construction, and honest pricing. If it doesn't meet our bar, it doesn't make it to our shelves.</p>
+        <p>We don't do fast fashion. Every product on <?= STORE_NAME ?> meets our strict quality standards — premium materials, expert construction, and honest pricing. If it doesn't meet our bar, it doesn't make it to our shelves.</p>
         <div class="values-grid">
             <div class="value-card">
                 <i class="fas fa-gem"></i>
@@ -45,8 +45,7 @@ require_once __DIR__ . '/includes/navbar.php';
 
     <div class="content-section" id="shipping">
         <h2>Delivery Options</h2>
-        <p><strong>Standard Delivery:</strong> 3–5 business days within Lagos, 5–7 business days nationwide. <?= format_price(1500) ?> shipping fee applies on orders below <?= format_price(FREE_DELIVERY_THRESHOLD) ?>.</p>
-        <p><strong>Free Delivery:</strong> Enjoy free shipping on all orders over <?= format_price(FREE_DELIVERY_THRESHOLD) ?>.</p>
+        <p><strong>Standard Delivery:</strong> 3–5 business days within Lagos, 5–7 business days nationwide. <?= format_price(1500) ?> shipping fee applies on orders below our free-shipping threshold.</p>
         <p><strong>Express Delivery:</strong> Available in Lagos (1–2 business days) for an additional <?= format_price(3000) ?>.</p>
     </div>
 
@@ -63,7 +62,7 @@ require_once __DIR__ . '/includes/navbar.php';
 
     <div class="content-section" id="terms">
         <h2>Terms & Conditions</h2>
-        <p>By using David's Store, you agree to our terms of service. All prices are listed in Nigerian Naira (₦) and include applicable taxes. We reserve the right to modify prices and availability without prior notice.</p>
+        <p>By using <?= STORE_NAME ?>, you agree to our terms of service. All prices are listed in Nigerian Naira (₦) and include applicable taxes. We reserve the right to modify prices and availability without prior notice.</p>
     </div>
 
     <div class="content-section" id="privacy">

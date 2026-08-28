@@ -1,5 +1,5 @@
 /**
- * David's Store — Main Application JavaScript
+ * Swagbag — Main Application JavaScript
  */
 (function () {
     'use strict';

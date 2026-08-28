@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" viewBox="0 0 800 300">
+  <defs>
+    <style>
+      .text-black { fill: #111111; font-family: 'Segoe UI', Roboto, Arial, sans-serif; font-weight: 700; font-size: 120px; }
+      .text-gold { fill: #b8860b; font-family: 'Segoe UI', Roboto, Arial, sans-serif; font-weight: 700; font-size: 120px; }
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="none"/>
+  <text x="20" y="180" class="text-black">Swag</text>
+  <text x="360" y="180" class="text-gold">bag</text>
+  <!-- simple bag icon as rectangle+handle -->
+  <g transform="translate(300,35)">
+    <rect x="45" y="25" rx="12" ry="12" width="120" height="90" fill="#b8860b" />
+    <path d="M60 25 C60 10, 105 10, 105 25" stroke="#111111" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

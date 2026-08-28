@@ -1,0 +1,25 @@
+:root {
+    /* Ensure the site uses the requested Swagbag colors */
+    --primary: #0B0C0E;
+    --secondary: #B1824F;
+    --secondary-hover: #9a6f08;
+}
+
+/* Legacy helper mapping */
+.text-orange { color: var(--secondary) !important; }
+
+/* Generic overrides for elements that used the old orange palette */
+.back-to-top { box-shadow: 0 4px 15px rgba(184,134,11,0.16) !important; }
+.category-nav-list li a.active, .category-nav-list li a:hover { background: rgba(184,134,11,0.08) !important; border-bottom-color: var(--secondary) !important; }
+.hero-banner::after { background: var(--secondary) !important; }
+.section-link { color: var(--secondary) !important; }
+.cart-count { background-color: var(--secondary) !important; }
+.btn-primary { background: var(--secondary) !important; }
+.btn-primary:hover { background: var(--secondary-hover) !important; }
+.pagination .active { background: var(--secondary) !important; }
+
+/* Dashboard stat icon (orange -> secondary) */
+.dashboard-stat-card .icon.orange { background: rgba(184,134,11,0.08); color: var(--secondary); }
+
+/* Jumia-themed overrides */
+.jumia-orange, .text-jumia { color: var(--secondary) !important; }

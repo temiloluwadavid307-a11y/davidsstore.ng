@@ -7,7 +7,7 @@ if (is_logged_in()) {
     redirect(APP_URL . '/index.php');
 }
 
-$page_title = 'Login — ' . APP_NAME;
+$page_title = 'Login — ' . STORE_NAME;
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -57,7 +57,7 @@ require_once __DIR__ . '/includes/navbar.php';
     <div class="form-page">
         <div class="form-card">
             <h1>Welcome Back</h1>
-            <p class="subtitle">Sign in to your David's Store account</p>
+            <p class="subtitle">Sign in to your <?= STORE_NAME ?> account</p>
             <p style="margin:-6px 0 18px; color:#6b7280; font-size:14px;">Need to manage your own store? Sign in and start a vendor application from the dashboard.</p>
 
             <?php if ($errors): ?>

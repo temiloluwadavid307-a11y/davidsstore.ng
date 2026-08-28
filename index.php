@@ -3,14 +3,14 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$page_title = APP_NAME . ' — Premium Fashion & Lifestyle';
-$page_description = 'Shop premium hoodies, sneakers, streetwear and accessories. Free delivery on orders over ' . format_price(FREE_DELIVERY_THRESHOLD);
+$page_title = STORE_NAME . ' — ' . STORE_TAGLINE;
+$page_description = STORE_TAGLINE . '.';
 
 // Fetch homepage data
 $featured = get_products(['limit' => 8, 'sort' => 'popular']);
 $flash_sale = get_products(['limit' => 8, 'sort' => 'discount']);
 $new_arrivals = get_products(['limit' => 8, 'sort' => 'newest']);
-$categories = get_categories();
+$categories = get_storefront_categories();
 
 // Filter featured products
 global $conn;
@@ -46,8 +46,8 @@ require_once __DIR__ . '/includes/navbar.php';
         <div class="hero-banner">
             <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=900&h=500&fit=crop" alt="Premium Fashion Collection">
             <div class="hero-content">
-                <h1>Premium Streetwear</h1>
-                <p>Curated fashion for the modern Nigerian lifestyle</p>
+                <h1>Shop the Brands That Set You Apart</h1>
+                <p>Curated fashion, accessories and footwear — discover premium brands and timeless pieces.</p>
                 <a href="<?= APP_URL ?>/products.php" class="cta-btn">Shop Collection</a>
             </div>
         </div>
@@ -142,7 +142,7 @@ require_once __DIR__ . '/includes/navbar.php';
     <!-- Newsletter -->
     <section class="newsletter-banner" style="display:flex; flex-direction:column; gap:16px; align-items:flex-start;">
         <h2>Become a Vendor</h2>
-        <p>Are you a brand, reseller, or creator? Apply to become a verified vendor on David's Store and start reaching new customers.</p>
+        <p>Are you a brand, reseller, or creator? Apply to become a verified vendor on <?= APP_NAME ?> and start reaching new customers.</p>
         <div style="display:flex; flex-wrap:wrap; gap:12px;">
             <a href="<?= APP_URL ?>/vendor/become-vendor.php" class="cta-btn">Apply Now</a>
             <a href="<?= APP_URL ?>/signup.php" class="cta-btn" style="background:transparent;border:1px solid #fff;">Create Account</a>

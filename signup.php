@@ -7,7 +7,7 @@ if (is_logged_in()) {
     redirect(APP_URL . '/index.php');
 }
 
-$page_title = 'Sign Up — ' . APP_NAME;
+$page_title = 'Sign Up — ' . STORE_NAME;
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email'] = $email;
                 $_SESSION['user_role'] = 'customer';
                 handle_new_user_registration($_SESSION['user_id'], $first_name, $last_name, $email, 'customer');
-                set_flash('success', 'Account created successfully! Welcome to David\'s Store.');
+                set_flash('success', 'Account created successfully! Welcome to ' . STORE_NAME . '.');
                 redirect(APP_URL . '/index.php');
             } else {
                 $errors[] = 'Registration failed. Please try again.';
@@ -58,7 +58,7 @@ require_once __DIR__ . '/includes/navbar.php';
     <div class="form-page">
         <div class="form-card">
             <h1>Create Account</h1>
-            <p class="subtitle">Join David's Store for exclusive access and faster checkout</p>
+            <p class="subtitle">Join <?= STORE_NAME ?> for exclusive access and faster checkout</p>
             <p style="margin:-6px 0 18px; color:#6b7280; font-size:14px;">A verification email will be sent to your inbox so you can complete registration and start shopping.</p>
             <p style="margin:-6px 0 18px; color:#6b7280; font-size:14px;">Planning to sell? Create your account first, then apply to become a vendor from your customer dashboard.</p>
 

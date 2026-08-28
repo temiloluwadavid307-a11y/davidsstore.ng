@@ -4,7 +4,7 @@ require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
 init_cart();
-$page_title = 'Shopping Cart — ' . APP_NAME;
+$page_title = 'Shopping Cart — ' . STORE_NAME;
 $cart_items = $_SESSION['cart'] ?? [];
 $subtotal = cart_total();
 $shipping = $subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : 1500;
@@ -79,11 +79,7 @@ require_once __DIR__ . '/includes/navbar.php';
                     <?= $shipping === 0 ? 'FREE' : format_price($shipping) ?>
                 </span>
             </div>
-            <?php if ($shipping > 0): ?>
-            <p style="font-size:12px;color:#888;margin:8px 0;">
-                Free delivery on orders over <?= format_price(FREE_DELIVERY_THRESHOLD) ?>
-            </p>
-            <?php endif; ?>
+            <?php /* Promotional free-delivery text removed per rebrand */ ?>
             <div class="summary-row total">
                 <span>Total</span>
                 <span><?= format_price($total) ?></span>

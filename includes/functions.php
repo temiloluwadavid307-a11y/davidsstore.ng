@@ -53,7 +53,22 @@ function image_url(?string $path, string $fallback = ''): string
     if (preg_match('/^https?:\/\//i', $path)) {
         return $path;
     }
-    return APP_URL . '/' . ltrim($path, '/');
+    // Normalize and encode local paths so spaces and special characters don't break URLs.
+    $clean = ltrim($path, '/');
+    $segments = explode('/', $clean);
+    $encodedSegments = array_map(function ($seg) {
+        return rawurlencode($seg);
+    }, $segments);
+    $encodedPath = implode('/', $encodedSegments);
+
+    // If the file exists on disk, return an absolute URL to it. Otherwise return encoded path anyway.
+    $fsPath = ROOT_PATH . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $clean);
+    if (is_file($fsPath)) {
+        return APP_URL . '/' . $encodedPath;
+    }
+
+    // As a fallback, return the encoded URL (it may point to a CDN or relative asset path stored in DB).
+    return APP_URL . '/' . $encodedPath;
 }
 
 /**
@@ -660,7 +675,7 @@ function consume_password_reset_token(string $token): ?int
  */
 function build_email_template(string $subject, string $body, string $actionUrl = '', string $actionLabel = ''): string
 {
-    $logoUrl = APP_URL . '/images for coding/logo.png';
+    $logoUrl = APP_URL . '/assets/images/swagbag-logo.png';
     $supportEmail = ADMIN_EMAIL;
     $appUrl = APP_URL;
     $year = date('Y');
@@ -672,7 +687,7 @@ function build_email_template(string $subject, string $body, string $actionUrl =
 
     $socialLinksHtml = '<tr><td align="center" style="padding:18px 40px 0; font-size:14px; color:#6b7280;"><a href="https://facebook.com" style="margin:0 8px; color:#111827; text-decoration:none;">Facebook</a><span style="margin:0 8px; color:#d1d5db;">•</span><a href="https://instagram.com" style="margin:0 8px; color:#111827; text-decoration:none;">Instagram</a><span style="margin:0 8px; color:#d1d5db;">•</span><a href="https://twitter.com" style="margin:0 8px; color:#111827; text-decoration:none;">Twitter</a></td></tr>';
 
-    return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . e($subject) . '</title></head><body style="margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; background:#f4f5f7; color:#111827;"><table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr><td align="center" style="padding:24px 16px;"><table width="600" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(15,23,42,0.08);"><tr><td style="padding:32px; text-align:center; background:#111827;"><img src="' . e($logoUrl) . '" alt="' . e(APP_NAME) . '" width="120" style="display:block; margin:0 auto 18px;" /><h1 style="color:#ffffff; font-size:24px; margin:0;">' . e(APP_NAME) . '</h1><p style="color:#cbd5e1; margin:8px 0 0;">' . e(APP_TAGLINE) . '</p></td></tr><tr><td style="padding:32px 40px 28px;">' . $body . '</td></tr>' . $buttonHtml . $socialLinksHtml . '<tr><td style="padding:0 40px 32px; color:#6b7280; font-size:14px; line-height:1.7;"><p style="margin:0 0 10px;">Need help? Contact us at <a href="mailto:' . e($supportEmail) . '" style="color:#111827; text-decoration:none;">' . e($supportEmail) . '</a>.</p><p style="margin:0;">' . e(APP_NAME) . ' • <a href="' . e($appUrl) . '" style="color:#111827; text-decoration:none;">' . e($appUrl) . '</a></p></td></tr><tr><td style="padding:20px 40px; background:#f8fafc; color:#9ca3af; font-size:12px; text-align:center;">© ' . e($year) . ' ' . e(APP_NAME) . '. All rights reserved.</td></tr></table></td></tr></table></body></html>';
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' . e($subject) . '</title></head><body style="margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; background:#f4f5f7; color:#111827;"><table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr><td align="center" style="padding:24px 16px;"><table width="600" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(15,23,42,0.08);"><tr><td style="padding:32px; text-align:center; background:#111827;"><img src="' . e($logoUrl) . '" alt="' . e(STORE_NAME) . '" width="120" style="display:block; margin:0 auto 18px;" /><h1 style="color:#ffffff; font-size:24px; margin:0;">' . e(STORE_NAME) . '</h1><p style="color:#cbd5e1; margin:8px 0 0;">' . e(STORE_TAGLINE) . '</p></td></tr><tr><td style="padding:32px 40px 28px;">' . $body . '</td></tr>' . $buttonHtml . $socialLinksHtml . '<tr><td style="padding:0 40px 32px; color:#6b7280; font-size:14px; line-height:1.7;"><p style="margin:0 0 10px;">Need help? Contact us at <a href="mailto:' . e($supportEmail) . '" style="color:#111827; text-decoration:none;">' . e($supportEmail) . '</a>.</p><p style="margin:0;">' . e(STORE_NAME) . ' • <a href="' . e($appUrl) . '" style="color:#111827; text-decoration:none;">' . e($appUrl) . '</a></p></td></tr><tr><td style="padding:20px 40px; background:#f8fafc; color:#9ca3af; font-size:12px; text-align:center;">© ' . e($year) . ' ' . e(STORE_NAME) . '. All rights reserved.</td></tr></table></td></tr></table></body></html>';
 }
 
 /**
@@ -681,13 +696,13 @@ function build_email_template(string $subject, string $body, string $actionUrl =
 function send_customer_welcome_email(int $user_id, string $first_name, string $last_name, string $email): bool
 {
     $fullName = trim($first_name . ' ' . $last_name);
-    $subject = 'Welcome to ' . APP_NAME;
+    $subject = 'Welcome to ' . STORE_NAME;
     $body = '<h2 style="margin-top:0;">Welcome, ' . e($fullName) . '!</h2>';
     $body .= '<p>Thank you for joining ' . e(APP_NAME) . '. Your customer account has been created successfully.</p>';
     $body .= '<p><strong>Account type:</strong> Customer</p>';
     $body .= '<p><strong>Registration date:</strong> ' . e(date('F j, Y H:i')) . '</p>';
     $body .= '<p>Explore products, save favorites, and manage your orders from your account dashboard.</p>';
-    $text = 'Welcome to ' . APP_NAME . '! Your customer account has been created successfully.';
+    $text = 'Welcome to ' . STORE_NAME . '! Your customer account has been created successfully.';
     $loginUrl = APP_URL . '/login.php';
     $html = build_email_template($subject, $body, $loginUrl, 'Sign in to your account');
     return send_email_notification($user_id, $email, $subject, $html, $text);
@@ -818,7 +833,7 @@ function send_email_verification_email(int $user_id, string $first_name, string 
 {
     $subject = 'Verify Your Email Address';
     $verifyUrl = APP_URL . '/verify-email.php?token=' . urlencode($token);
-    $body = '<h2 style="margin-top:0;">Welcome to ' . e(APP_NAME) . ', ' . e($first_name) . '!</h2>';
+    $body = '<h2 style="margin-top:0;">Welcome to ' . e(STORE_NAME) . ', ' . e($first_name) . '!</h2>';
     $body .= '<p>Please verify your email address to complete your registration.</p>';
     $body .= '<p>Once verified, you will be able to access your account and receive order notifications.</p>';
     $html = build_email_template($subject, $body, $verifyUrl, 'Verify your email');
@@ -1103,6 +1118,30 @@ function get_categories(): array
     global $conn;
     $result = $conn->query('SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order, name');
     return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}
+
+/**
+ * Get storefront categories for customer-facing UI.
+ * Excludes non-fashion categories without modifying the database.
+ */
+function get_storefront_categories(): array
+{
+    $exclude_keywords = ['food', 'snack', 'home', 'kitchen', 'electronics'];
+    $cats = get_categories();
+    $filtered = array_filter($cats, function ($c) use ($exclude_keywords) {
+        $name = strtolower($c['name'] ?? '');
+        $slug = strtolower($c['slug'] ?? '');
+        foreach ($exclude_keywords as $kw) {
+            if (strpos($name, $kw) !== false) {
+                return false;
+            }
+            if (strpos($slug, $kw) !== false) {
+                return false;
+            }
+        }
+        return true;
+    });
+    return array_values($filtered);
 }
 
 /**

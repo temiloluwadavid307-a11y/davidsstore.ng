@@ -20,7 +20,7 @@ $filters = [
 $products = get_products($filters);
 $total = count_products($filters);
 $total_pages = max(1, (int) ceil($total / PRODUCTS_PER_PAGE));
-$categories = get_categories();
+$categories = get_storefront_categories();
 
 $cat_name = 'All Products';
 if ($category) {
@@ -32,7 +32,7 @@ if ($category) {
     }
 }
 
-$page_title = ($search ? "Search: $search" : $cat_name) . ' — ' . APP_NAME;
+$page_title = ($search ? "Search: $search" : $cat_name) . ' — ' . STORE_NAME;
 
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/includes/navbar.php';

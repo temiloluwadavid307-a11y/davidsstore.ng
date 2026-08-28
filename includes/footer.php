@@ -18,7 +18,7 @@
                 </ul>
             </div>
             <div class="footer-col">
-                <h3>About David's Store</h3>
+                <h3>About <?= STORE_NAME ?></h3>
                 <ul>
                     <li><a href="<?= APP_URL ?>/about.php">Our Story</a></li>
                     <li><a href="<?= APP_URL ?>/about.php#quality">Quality Promise</a></li>
@@ -31,9 +31,9 @@
                 <h3>Shop Categories</h3>
                 <ul>
                     <?php
-                    $footer_cats = get_categories();
-                    foreach (array_slice($footer_cats, 0, 6) as $cat):
-                    ?>
+                        $footer_cats = get_storefront_categories();
+                        foreach (array_slice($footer_cats, 0, 6) as $cat):
+                        ?>
                     <li><a href="<?= APP_URL ?>/products.php?category=<?= e($cat['slug']) ?>"><?= e($cat['name']) ?></a></li>
                     <?php endforeach; ?>
                 </ul>
@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="copyright">
-            &copy; <?= date('Y') ?> David.ng — All Rights Reserved. Premium Fashion & Lifestyle.
+            &copy; <?= date('Y') ?> <?= STORE_NAME ?> — All Rights Reserved. Shop the Brands That Set You Apart.
         </div>
     </div>
 </footer>

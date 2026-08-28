@@ -8,6 +8,9 @@
 
 define('APP_NAME', "David's Store");
 define('APP_TAGLINE', 'Premium Fashion & Lifestyle');
+// Storefront branding (leave APP_NAME for internal/admin uses)
+define('STORE_NAME', 'Swagbag');
+define('STORE_TAGLINE', 'Shop the Brands That Set You Apart');
 define('APP_CURRENCY', 'NGN');
 define('APP_CURRENCY_SYMBOL', '₦');
 

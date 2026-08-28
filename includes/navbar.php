@@ -6,21 +6,18 @@ if (!function_exists('cart_count')) {
     require_once __DIR__ . '/functions.php';
 }
 $user = current_user();
-$categories = get_categories();
+$categories = get_storefront_categories();
 $search_query = $_GET['q'] ?? '';
 ?>
 <header>
-    <div class="top-announcement">
-        <div class="container">
-            Free Delivery on orders over <?= format_price(FREE_DELIVERY_THRESHOLD) ?>! <a href="<?= APP_URL ?>/products.php">Shop Now</a>
-        </div>
-    </div>
     <div class="container">
         <nav class="main-nav" aria-label="Main navigation">
-            <a href="<?= APP_URL ?>/index.php" class="logo">DAVID'S<span>STORE</span></a>
+            <a href="<?= APP_URL ?>/index.php" class="logo" aria-label="<?= STORE_NAME ?>">
+                <img src="<?= APP_URL ?>/assets/images/swagbag-logo.svg" alt="<?= STORE_NAME ?>" style="height:40px; display:inline-block; vertical-align:middle;">
+            </a>
 
             <form class="search-container" action="<?= APP_URL ?>/products.php" method="get" role="search">
-                <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                <span class="search-icon"><i class="fas fa-search" aria-hidden="true"></i></span>
                 <input type="search" name="q" value="<?= e($search_query) ?>" placeholder="Search products, brands and categories" aria-label="Search products" data-tooltip="Search our product catalog">
                 <button type="submit" class="search-btn" data-tooltip="Search for products">Search</button>
             </form>

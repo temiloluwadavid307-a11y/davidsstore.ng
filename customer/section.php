@@ -150,12 +150,12 @@ if ($page_key === 'orders') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/platform.css">
     <style>
-        body { background: #f5f5f5; }
+        body { background: var(--light); }
         .customer-shell { display: flex; min-height: 100vh; }
         .sidebar { width: 260px; background: #282828; color: #fff; padding: 24px 0; }
         .sidebar .brand { padding: 0 24px 20px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.08em; }
         .sidebar a { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.78); padding: 13px 24px; text-decoration: none; }
-        .sidebar a:hover, .sidebar a.active { background: #F68B1E; color: #fff; }
+        .sidebar a:hover, .sidebar a.active { background: var(--secondary); color: #fff; }
         .main-content { flex: 1; padding: 24px; }
         .top-bar { background: #fff; border-radius: 16px; padding: 20px 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .content-card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
@@ -185,7 +185,7 @@ if ($page_key === 'orders') {
 <body>
 <div class="customer-shell">
     <aside class="sidebar">
-        <div class="brand">David's Store</div>
+            <div class="brand"><?= STORE_NAME ?></div>
         <nav>
             <a href="<?= APP_URL ?>/customer/index.php"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
             <a class="<?= $page_key === 'orders' ? 'active' : '' ?>" href="<?= APP_URL ?>/customer/section.php?page=orders"><i class="fa-solid fa-basket-shopping"></i> My Orders</a>
@@ -201,7 +201,7 @@ if ($page_key === 'orders') {
         <div class="top-bar">
             <div>
                 <h4 class="mb-1">Welcome back, <?= e($customer_name) ?></h4>
-                <p class="text-muted mb-0">Your David's Store account is ready for effortless shopping.</p>
+                <p class="text-muted mb-0">Your <?= STORE_NAME ?> account is ready for effortless shopping.</p>
             </div>
             <div class="text-end">
                 <div class="fw-bold"><?= e($customer_email) ?></div>
