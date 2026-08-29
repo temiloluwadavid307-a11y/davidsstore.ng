@@ -3,8 +3,8 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$page_title = STORE_NAME . ' — ' . STORE_TAGLINE;
-$page_description = STORE_TAGLINE . '.';
+$page_title = brand_name() . ' — ' . brand_tagline();
+$page_description = brand_tagline() . '.';
 
 // Fetch homepage data
 $featured = get_products(['limit' => 8, 'sort' => 'popular']);
