@@ -6,3 +6,7 @@
 *.log
 *.cache
 *.tmp
+
+/config/cpanel_live_config.php
+/config/production.php
+/config/paystack.php
