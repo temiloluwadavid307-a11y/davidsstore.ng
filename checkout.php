@@ -14,7 +14,7 @@ if (empty($cart_items)) {
 
 $page_title = 'Checkout — ' . STORE_NAME;
 $subtotal = cart_total();
-$shipping = $subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : 1500;
+$shipping = 5000;
 $total = $subtotal + $shipping;
 $user = current_user();
 $errors = [];
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $city = sanitize($_POST['city'] ?? '');
     $state = sanitize($_POST['state'] ?? '');
     $notes = sanitize($_POST['notes'] ?? '');
-    $payment_method = sanitize($_POST['payment'] ?? 'pay_on_delivery');
+    $payment_method = sanitize($_POST['payment'] ?? 'paystack');
     $paystack_reference = sanitize($_POST['paystack_reference'] ?? $paystack_reference);
 
     if (empty($name)) $errors[] = 'Full name is required.';
@@ -128,6 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($address)) $errors[] = 'Shipping address is required.';
     if (empty($city)) $errors[] = 'City is required.';
     if (empty($state)) $errors[] = 'State is required.';
+
+    if ($payment_method === 'pay_on_delivery') {
+        $errors[] = 'Pay on Delivery is currently unavailable. Please use Paystack.';
+    }
 
     if (empty($errors)) {
         if ($payment_method === 'paystack') {
@@ -542,14 +546,6 @@ require_once __DIR__ . '/includes/navbar.php';
                         <p>Secure card payment with the test key integrated for this store.</p>
                     </div>
                     <i class="fas fa-credit-card"></i>
-                </label>
-                <label class="payment-option payment-option-alt">
-                    <input type="radio" name="payment" value="pay_on_delivery">
-                    <div>
-                        <strong>Pay on Delivery</strong>
-                        <p>Pay when your order arrives at your doorstep.</p>
-                    </div>
-                    <i class="fas fa-money-bill-wave"></i>
                 </label>
                 <input type="hidden" name="paystack_reference" id="paystack_reference" value="<?= e($paystack_reference) ?>">
                 <button type="submit" class="btn btn-primary btn-lg checkout-submit">
