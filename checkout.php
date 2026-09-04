@@ -14,7 +14,7 @@ if (empty($cart_items)) {
 
 $page_title = 'Checkout — ' . STORE_NAME;
 $subtotal = cart_total();
-$shipping = $subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : 1500;
+$shipping = 5000;
 $total = $subtotal + $shipping;
 $user = current_user();
 $errors = [];

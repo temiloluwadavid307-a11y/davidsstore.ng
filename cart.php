@@ -7,7 +7,7 @@ init_cart();
 $page_title = 'Shopping Cart — ' . STORE_NAME;
 $cart_items = $_SESSION['cart'] ?? [];
 $subtotal = cart_total();
-$shipping = $subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : 1500;
+$shipping = 5000;
 $total = $subtotal + $shipping;
 
 require_once __DIR__ . '/includes/header.php';

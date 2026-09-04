@@ -47,11 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new Exception('Unable to update application.');
                 }
 
+                $user_stmt = $conn->prepare('SELECT id, first_name, last_name, email FROM users WHERE id = ? LIMIT 1');
+                $user_stmt->bind_param('i', $application['user_id']);
+                $user_stmt->execute();
+                $user = $user_stmt->get_result()->fetch_assoc();
+
                 if ($status === 'approved') {
-                    $user_stmt = $conn->prepare('SELECT id, first_name, last_name, email FROM users WHERE id = ? LIMIT 1');
-                    $user_stmt->bind_param('i', $application['user_id']);
-                    $user_stmt->execute();
-                    $user = $user_stmt->get_result()->fetch_assoc();
                     if (!$user) {
                         throw new Exception('Applicant user not found.');
                     }
@@ -102,11 +103,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
                     add_notification($application['user_id'], 'Vendor application approved', 'Your vendor application has been approved. You can now access the vendor dashboard.', 'success');
-                    send_vendor_approval_email($user['id'], $user['first_name'] . ' ' . $user['last_name'], $application['business_name'], $application['store_name'], $user['email']);
+                    send_vendor_approval_email((int) $user['id'], $user['first_name'] . ' ' . $user['last_name'], $application['business_name'], $application['store_name'], $user['email']);
                     add_audit_log($reviewed_by, 'vendor_application_approved', 'Approved vendor application #' . $application_id . ' for user ' . $application['user_id']);
                 } else {
                     add_notification($application['user_id'], 'Vendor application rejected', 'Your vendor application was rejected. Please contact support for more details.', 'warning');
-                    send_vendor_rejection_email($user['id'], $user['first_name'] . ' ' . $user['last_name'], $user['email'], $review_notes);
+
+                    $reject_user_id = (int) ($user['id'] ?? 0);
+                    if ($reject_user_id > 0 && !empty($user['email'])) {
+                        send_vendor_rejection_email($reject_user_id, ($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''), $user['email'], $review_notes);
+                    } else {
+                        add_audit_log($reviewed_by, 'vendor_application_rejected_no_user', 'Rejected vendor application #' . $application_id . ' for user ' . $application['user_id'] . ' but no user record/email was available for notification.');
+                    }
+
                     add_audit_log($reviewed_by, 'vendor_application_rejected', 'Rejected vendor application #' . $application_id . ' for user ' . $application['user_id']);
                 }
 

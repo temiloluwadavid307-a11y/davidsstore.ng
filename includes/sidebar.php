@@ -16,6 +16,7 @@ if ($user_role === 'admin') {
         ['id' => 'vendor-applications', 'name' => 'Vendor Applications', 'url' => 'vendor-applications.php', 'icon' => 'fas fa-clipboard-list'],
         ['id' => 'statistics', 'name' => 'Statistics', 'url' => 'statistics.php', 'icon' => 'fas fa-chart-line'],
         ['id' => 'messages', 'name' => 'Messages', 'url' => 'messages.php', 'icon' => 'fas fa-envelope'],
+        ['id' => 'change-password', 'name' => 'Change Password', 'url' => 'change-password.php', 'icon' => 'fas fa-key'],
     ];
 } else if ($user_role === 'vendor') {
     $nav_items = [

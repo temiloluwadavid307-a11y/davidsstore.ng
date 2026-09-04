@@ -40,7 +40,6 @@ if (!defined('PAYSTACK_PUBLIC_KEY')) define('PAYSTACK_PUBLIC_KEY', 'pk_live_1c45
 if (!defined('API_JWT_SECRET')) define('API_JWT_SECRET', 'dev-api-secret-change-me');
 
 define('PRODUCTS_PER_PAGE', 12);
-define('FREE_DELIVERY_THRESHOLD', 10000);
 
 error_reporting(0);
 ini_set('display_errors', 0);

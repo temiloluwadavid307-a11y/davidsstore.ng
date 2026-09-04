@@ -14,6 +14,36 @@ function e(?string $value): string
 }
 
 /**
+ * Backward-compatible storefront branding helpers.
+ * Some older pages still call brand_name() and brand_tagline().
+ */
+function brand_name(): string
+{
+    if (defined('STORE_NAME') && STORE_NAME !== '') {
+        return (string) STORE_NAME;
+    }
+
+    if (defined('APP_NAME') && APP_NAME !== '') {
+        return (string) APP_NAME;
+    }
+
+    return 'Store';
+}
+
+function brand_tagline(): string
+{
+    if (defined('STORE_TAGLINE') && STORE_TAGLINE !== '') {
+        return (string) STORE_TAGLINE;
+    }
+
+    if (defined('APP_TAGLINE') && APP_TAGLINE !== '') {
+        return (string) APP_TAGLINE;
+    }
+
+    return 'Shop with confidence';
+}
+
+/**
  * Format Nigerian Naira currency
  */
 function format_price(float $amount): string
@@ -196,6 +226,58 @@ function get_setting(string $key, $default = null) {
 function is_logged_in(): bool
 {
     return !empty($_SESSION['user_id']);
+}
+
+/**
+ * Validate a password against the app's policy.
+ */
+function validate_password_policy(string $password): array
+{
+    $errors = [];
+
+    if (strlen($password) < 8) {
+        $errors[] = 'Password must be at least 8 characters long.';
+    }
+
+    if (!preg_match('/[A-Za-z]/', $password) || !preg_match('/\d/', $password)) {
+        $errors[] = 'Password must contain at least one letter and one number.';
+    }
+
+    return $errors;
+}
+
+/**
+ * Update a user's password after verifying the current password.
+ */
+function change_user_password(int $user_id, string $current_password, string $new_password): bool
+{
+    global $conn;
+
+    $user = $conn->prepare('SELECT id, password_hash FROM users WHERE id = ? AND is_active = 1 LIMIT 1');
+    if (!$user) {
+        return false;
+    }
+
+    $user->bind_param('i', $user_id);
+    $user->execute();
+    $row = $user->get_result()->fetch_assoc();
+
+    if (!$row || !password_verify($current_password, $row['password_hash'])) {
+        return false;
+    }
+
+    $new_hash = password_hash($new_password, PASSWORD_BCRYPT);
+    if ($new_hash === false) {
+        return false;
+    }
+
+    $stmt = $conn->prepare('UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?');
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param('si', $new_hash, $user_id);
+    return $stmt->execute();
 }
 
 /**

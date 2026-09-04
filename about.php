@@ -45,7 +45,7 @@ require_once __DIR__ . '/includes/navbar.php';
 
     <div class="content-section" id="shipping">
         <h2>Delivery Options</h2>
-        <p><strong>Standard Delivery:</strong> 3–5 business days within Lagos, 5–7 business days nationwide. <?= format_price(1500) ?> shipping fee applies on orders below our free-shipping threshold.</p>
+        <p><strong>Standard Delivery:</strong> 3–5 business days within Lagos, 5–7 business days nationwide. Lagos orders have a flat shipping fee of <?= format_price(5000) ?>.</p>
         <p><strong>Express Delivery:</strong> Available in Lagos (1–2 business days) for an additional <?= format_price(3000) ?>.</p>
     </div>
 

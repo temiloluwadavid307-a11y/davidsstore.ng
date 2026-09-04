@@ -93,7 +93,6 @@ if (!defined('PAYSTACK_PUBLIC_KEY')) {
 }
 
 define('PRODUCTS_PER_PAGE', 12);
-define('FREE_DELIVERY_THRESHOLD', 10000);
 
 if (APP_ENV === 'production') {
     error_reporting(0);
